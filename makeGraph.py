@@ -8,7 +8,7 @@ import argparse
 Parse arguments. None are required.
 '''
 def parseArgs():
-    parser = argparse.ArgumentParser(description='Construct a graph using the MeSH headings of drugs in ChEMBL.')
+    parser = argparse.ArgumentParser(description='Construct a graph using the MeSH headings of drugs in ChEMBL. Write graph and a drug:node dict to pickle files.')
     parser.add_argument('-i', '--input', help='A TSV of drugs and their indications.', type=str, required=True)
     parser.add_argument('-o', '--output', help='Path to output directory.', default='.', type=str, required=False)
     parser.add_argument('-h', '--headings', help='A pickle file of a dictionary that has MeSH headings as keys and a list their numbers as values.', type=str, required=True)
