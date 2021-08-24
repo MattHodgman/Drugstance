@@ -8,7 +8,9 @@ tail -n+2 data/$indications | cut -d$'\t' -f2 | sort | uniq > data/drugs
 split -n l/${num_jobs} data/drugs 'data/drugs_'
 
 # make output dir for tsvs
-mkdir output
+mkdir semantic_distances
+mkdir overlaps
 
 # run a job on each drug list
-ls data/drugs_* | xargs -I {} sbatch child.sh {} output
+ls data/drugs_* | xargs -I {} sbatch job.sh computeSemanticDistances.py {} semantic_distances
+ls data/drugs_* | xargs -I {} sbatch job.sh computeOverlaps.py {} overlaps

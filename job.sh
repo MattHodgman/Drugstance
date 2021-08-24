@@ -8,8 +8,9 @@
                                            # You can change the filenames given with -o and -e to any filenames you'd like
 
 # args
-drugs_list=$1 # the list of drugs to be used in this child process
-out=$2 # dir to write output file to
+metric=$1
+drugs_list=$2 # the list of drugs to be used in this child process
+out=$3 # dir to write output file to
 
 # get id
 id=$(echo $drugs_list | grep -oP '(?<=_)\w+')
@@ -21,7 +22,7 @@ source ~/.bashrc
 conda activate py38env
 
 # Run computeDistances.py using multiple processes
-python3 computeSemanticDistances.py -n 20 -d $drugs_list -a data/drugs -g data/chembl.gpkl -p data/drug_node_dict.pkl -i $id -o $out
+python3 $1 -n 20 -d $drugs_list -a data/drugs -g data/chembl.gpkl -p data/drug_node_dict.pkl -i $id -o $out
 
 # close conda env
 conda deactivate
