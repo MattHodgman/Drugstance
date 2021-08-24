@@ -8,6 +8,12 @@ bash pipeline d2021.bin indications.tsv
 ```
 Note: Files create and used in the pipeline will be written to a directory called `data/` and output files will be written to a directory called `output/`.
 
+## Example usage (Docker)
+This is a standalone version of the algorithm that runs within Docker. There is no multiprocessing nor job usage. Therefore it will run very slowly and require a lot of memory. We recommend running it with a smaller set of drugs and indications.
+```
+docker run --rm -v "$PWD":/data labsyspharm/drugstance:latest python3 /app/drugstance -i d2021.bin -m indications.tsv -o /data/
+``` 
+
 ## Input Files
 `d2021.bin` is all [MeSH data](https://www.nlm.nih.gov/databases/download/mesh.html) downloaded in ASCII format. `indications.tsv` is a TSV file from [ChEMBL](https://www.ebi.ac.uk/chembl/) that contains in the column `pref_name` the name of the drug and in the column `mesh_heading` a valid MeSH heading that is an indication of that drug. For example:
 
