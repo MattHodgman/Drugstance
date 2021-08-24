@@ -13,7 +13,7 @@ def parseArgs():
     parser = argparse.ArgumentParser(description='Compute the semantic distance and overlap between drugs in ChEMBL using the MeSH headings of their indications.')
     parser.add_argument('-i', '--input', help='A TSV file containing ChEMBL drug indication information. Must contain the drug name under the column \'pref_name\' and the valid MeSH heading (indication) under \'mesh_heading\'.', type=str, required=True)
     parser.add_argument('-m', '--mesh', help='A file all MeSH data in ASCII format', type=str, required=True)
-    parser.add_argument('-o', '--output', help='Output directory.', default='.' type=str, required=False)
+    parser.add_argument('-o', '--output', help='Output directory.', default='.', type=str, required=False)
     args = parser.parse_args()
     return args
 
