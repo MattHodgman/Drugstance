@@ -108,7 +108,7 @@ Write results to table.
 '''
 def write_results_new(distances):
     
-    with open(f'{args.output}/drug_distances_{args.id}.tsv', 'w', newline='') as f:
+    with open(f'{args.output}/drug_semantic_distances_{args.id}.tsv', 'w', newline='') as f:
         writer = csv.writer(f, delimiter='\t')
         if args.id == 'aa':
             all_drugs.insert(0,'Drug')
