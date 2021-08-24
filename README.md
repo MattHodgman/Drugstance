@@ -9,10 +9,10 @@ bash pipeline d2021.bin indications.tsv
 Note: Files create and used in the pipeline will be written to a directory called `data/` and output files will be written to a directory called `output/`.
 
 ## Input Files
-`d2021.bin` is all [MeSH data](https://www.nlm.nih.gov/databases/download/mesh.html) downloaded in ASCII format. `indications.tsv` is a TSV file that contains in the column `pref_name` the name of the drug, in the column `chembl_id` the ChEMBL ID of the drug, and in the column `mesh_heading` a valid MeSH heading that is an indication of that drug. For example:
+`d2021.bin` is all [MeSH data](https://www.nlm.nih.gov/databases/download/mesh.html) downloaded in ASCII format. `indications.tsv` is a TSV file that contains in the column `pref_name` the name of the drug and in the column `mesh_heading` a valid MeSH heading that is an indication of that drug. For example:
 
-chembl_id | pref_name | mesh_heading
---------- | --------- | ------------
-CHEMBL221959 | TOFACITINIB | Immune System Diseases
-CHEMBL221959 | TOFACITINIB | Arthritis, Rheumatoid
-CHEMBL25 | ASPIRIN | Pain
+pref_name | mesh_heading
+--------- | ------------
+TOFACITINIB | Immune System Diseases
+TOFACITINIB | Arthritis, Rheumatoid
+ASPIRIN | Pain

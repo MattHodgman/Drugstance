@@ -35,10 +35,7 @@ def up(n):
 Get indications headings.
 '''
 def get_headings(drug):
-    if 'CHEMBL' in drug:
-        indications = chembl[chembl['chembl_id'] == drug.upper()]
-    else:
-        indications = chembl[chembl['pref_name'] == drug.upper()]
+    indications = chembl[chembl['pref_name'] == drug.upper()]
     headings = sorted(list(set(indications.mesh_heading)))
     return headings
 
