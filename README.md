@@ -6,7 +6,7 @@ When running this pipeline on a large number of drugs, it is recommended to use 
 ```
 bash pipeline d2021.bin indications.tsv
 ```
-Note: Files create and used in the pipeline will be written to a directory called `data/` and output files will be written to a directory called `output`.
+Note: Files create and used in the pipeline will be written to a directory called `data/` and output files will be written to a directory called `output/`.
 
 ## Input Files
 `d2021.bin` is all [MeSH data](https://www.nlm.nih.gov/databases/download/mesh.html) downloaded in ASCII format. `indications.tsv` is a TSV file that contains in the column `pref_name` the name of the drug and in the column `mesh_heading` a valid MeSH heading that is an indication of that drug. For example:
