@@ -13,7 +13,8 @@ def parseArgs():
     parser = argparse.ArgumentParser(description='Compute the semantic distance and overlap between drugs in ChEMBL using the MeSH headings of their indications.')
     parser.add_argument('-i', '--input', help='A TSV file containing ChEMBL drug indication information. Must contain the drug name under the column \'pref_name\' and the valid MeSH heading (indication) under \'mesh_heading\'.', type=str, required=True)
     parser.add_argument('-m', '--mesh', help='A file all MeSH data in ASCII format', type=str, required=True)
-    parser.add_argument('-o', '--output', help='Output directory.', default='.', type=str, required=False)
+    parser.add_argument('-s', '--sample', help='The number of drugs to use for testing this script on a random sample.', type=int, required=False)
+    parser.add_argument('-o', '--output', help='Output directory.', default='/data', type=str, required=False)
     args = parser.parse_args()
     return args
 
@@ -22,7 +23,7 @@ def parseArgs():
 Get a drug's indications
 '''
 def getIndications(drug):
-    indications = set(chembl[chembl['pref_name'] == drug]['mesh_heading'].tolist())
+    indications = set(chembl[chembl[NAME] == drug][INDICATION].tolist())
     return indications
 
 
@@ -106,7 +107,6 @@ Write results to a TSV.
 def writeResults(results, f):
     with open(f'{args.output}/{f}', 'w', newline='') as f:
         writer = csv.writer(f, delimiter='\t')
-        drugs.insert(0,'Drug')
         writer.writerow(drugs)
         writer.writerows(results)
 
@@ -129,7 +129,7 @@ def up(n):
 Get indications headings.
 '''
 def getHeadings(drug):
-    indications = chembl[chembl['pref_name'] == drug.upper()]
+    indications = chembl[chembl[NAME] == drug.upper()]
     headings = sorted(list(set(indications.mesh_heading)))
     return headings
 
@@ -138,11 +138,8 @@ def getHeadings(drug):
 Make a graph where the nodes are MeSH headings and the directed edges form the heirarchy. Each node has as an attribute the list of drugs that include that node.
 '''
 def makeGraph(drugs):
-
-    node_drug_dict = {}
-
-    # initialize DAG
-    G = nx.DiGraph()
+    node_drug_dict = {} # init dict
+    G = nx.DiGraph() # init DAG
 
     for drug in drugs:
         drug_node_dict[drug] = set()
@@ -157,7 +154,7 @@ def makeGraph(drugs):
 
             # add all parents
             for n in mesh_headings[heading]:
-                c_heading = heading
+                c_heading = heading # set child heading
                 for i in range(n.count('.') + 1):
                     p = up(n) # get parent number
                     p_heading = mesh_numbers[p] # get parent heading
@@ -226,12 +223,29 @@ Create two dictionaries:
 def mapMeSH(meshFile):
     mesh_headings = {}
     mesh_numbers = {}
+
+    roots = {'A' : 'Anatomy',
+            'B' : 'Organisms',
+            'C' : 'Diseases',
+            'D' : 'Chemicals and Drugs',
+            'E' : 'Analytical, Diagnostic and Therapeutic Techniques, and Equipment',
+            'F' : 'Psychiatry and Psychology',
+            'G' : 'Phenomena and Processes',
+            'H' : 'Disciplines and Occupations',
+            'I' : 'Anthropology, Education, Sociology, and Social Phenomena',
+            'J' : 'Technology, Industry, and Agriculture',
+            'K' : 'Humanities',
+            'L' : 'Information Science',
+            'M' : 'Named Groups',
+            'N' : 'Health Care',
+            'V' : 'Publication Characteristics',
+            'Z' : 'Geographicals'}
     
     # read input
     with open(meshFile, mode='rb') as file:
         mesh = file.readlines()
 
-    # parse input
+    # parse input and build dicts
     for line in mesh:
         meshTerm = re.search(b'MH = (.+)$', line)
         if meshTerm:
@@ -246,19 +260,43 @@ def mapMeSH(meshFile):
             else:
                 mesh_headings[term] = list()
                 mesh_headings[term].append(number.decode('utf-8'))
+
+    # add roots
+    for number, heading in roots.items():
+        mesh_headings[heading] = number
+        mesh_numbers[number] = heading
     
     return mesh_headings, mesh_numbers
+
+
+'''
+Take a random sample of n drugs from ChEMBL.
+'''
+def sample(n, drugs, chembl):
+    import random
+    drugs = random.sample(drugs, n) # get random set of drugs
+    chembl = chembl[chembl[NAME].isin(drugs)] # filter chembl
+    return drugs, chembl
 
 
 '''
 Main.
 '''
 if __name__ == "__main__":
+    # CONSTANTS
+    NAME = 'pref_name' # the name of the drug
+    INDICATION = 'mesh_heading' # the MeSH heading
+
     args = parseArgs() # parse arguments
 
     print('Loading input data...')
     chembl = pd.read_csv(args.input, sep='\t') # load in ChEMBL
-    drugs = list(set(chembl['pref_name'])) # get drug list
+    drugs = list(set(chembl[NAME])) # get drug list
+
+    # use random sample of ChEMBL if requested
+    if args.sample is not None:
+        drugs, chembl = sample(args.sample, drugs, chembl)
+
     drug_node_dict = {} # init dict
 
     print('Mapping MeSH headings and numbers...')
@@ -274,5 +312,6 @@ if __name__ == "__main__":
     semantic_distances, overlaps = runComparisons(drugs)
 
     print('Writing results...')
+    drugs.insert(0,'Drug')
     writeResults(semantic_distances, 'semantic_distances.tsv')
     writeResults(overlaps, 'overlaps.tsv')
