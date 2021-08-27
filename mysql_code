@@ -1,0 +1,18 @@
+Run this to extract the necessary tables. Replace atc_classification with the table name. You may have to peek at the file in order to know what foreign kets it has and thus what other tables you need to load into mysql first. 
+
+
+start=$(fgrep -n 'DROP TABLE IF EXISTS `atc_classification`' chembl_29_mysql.dmp | cut -d: -f1)
+end=$(fgrep -n '/*!40000 ALTER TABLE `atc_classification` ENABLE KEYS */;' chembl_29_mysql.dmp | cut -d: -f1)
+end=$(($end+1))
+diff=$(($end-$start))
+head -$end chembl_29_mysql.dmp | tail -$diff > atc_classification.sql
+vim atc_classification.sql
+mysql -u root -p chembl_28 < atc_classification.sql
+
+
+
+
+
+Then do joins like this to get tsv
+
+mysql -u root -p chembl_28 -e "SELECT * FROM molecule_atc_classification INNER JOIN atc_classification ON molecule_atc_classification.level5 = atc_classification.level5" -B > molecule_atc_classification.tsv
