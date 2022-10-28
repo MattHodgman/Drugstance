@@ -1,5 +1,5 @@
 # Drugstance
-Calculate the [semantic distance](https://academic.oup.com/bioinformatics/article/29/13/i53/195366) and [overlap coefficient](https://en.wikipedia.org/wiki/Overlap_coefficient) between drugs based on their indications.
+Calculate the semantic distance between drugs based on the [MeSH](https://www.nlm.nih.gov/mesh/meshhome.html) headings of their [ChEMBL](https://www.ebi.ac.uk/chembl/) indications. We employ an information theory [algorithm](https://academic.oup.com/bioinformatics/article/29/13/i53/195366) and the [overlap coefficient](https://en.wikipedia.org/wiki/Overlap_coefficient). We decided to use an RBF kernel on the semantic distance and average it with the overlap coefficient to create our final semantic distance matrix.
 
 ## Example usage (Slurm)
 When running this pipeline on a large number of drugs, it is recommended to use SLURM to split computations across multiple jobs, each multiprocessing across 20 cores. To do this simple run the following command:
