@@ -22,3 +22,6 @@ pref_name | mesh_heading
 TOFACITINIB | Immune System Diseases
 TOFACITINIB | Arthritis, Rheumatoid
 ASPIRIN | Pain
+
+## Transformations
+Optionally, you can transform the output data using an RBF kernel (or implement your own transformation) and then take the average between all distance metrics to create a final semantic distance measurement between drugs.
